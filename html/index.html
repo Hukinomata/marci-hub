@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="hu" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Marci // Control Center v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #050505; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; }
+        .glow { position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, #3b82f6 0%, transparent 70%); filter: blur(150px); opacity: 0.15; pointer-events: none; transition: 0.3s; }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(transparent 50%, rgba(0,0,0,0.1) 50%); background-size: 100% 4px; pointer-events: none; z-index: 50; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body class="p-10">
+    <div class="scanlines"></div>
+    <div class="glow" id="glow"></div>
+    
+    <header class="flex justify-between items-center mb-10">
+        <h1 class="text-3xl font-bold tracking-tighter">MARCI_HUB // <span id="clock" class="text-blue-500"></span></h1>
+        <div class="flex gap-4">
+            <div id="weather" class="glass px-6 py-2 text-sm text-slate-400">Erdőkertes: 22°C</div>
+            <div class="glass px-6 py-2 flex items-center gap-3">
+                <div class="status-dot"></div>
+                <span class="text-sm text-slate-400">SYSTEM ONLINE</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex gap-8 h-[calc(100vh-120px)]">
+        <aside class="w-1/4 flex flex-col gap-4">
+            <a href="https://jellyfin.marci2008.hu" class="glass p-6 hover:bg-white/5 transition-all block group">
+                <h2 class="text-lg font-bold">Jellyfin</h2>
+                <p class="text-slate-500 text-xs uppercase tracking-wider">Media Server</p>
+            </a>
+            <div class="glass p-6 opacity-50"><h2 class="text-lg font-bold">FiveM</h2><p class="text-slate-500 text-xs">Offline</p></div>
+        </aside>
+
+        <main class="flex-1 flex flex-col gap-8">
+            <div class="glass p-8 flex-1 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm text-slate-400 uppercase tracking-widest">Dev Log & Notes</h3>
+                    <button onclick="exportNotes()" class="text-[10px] text-blue-400 hover:text-white uppercase">Export .txt</button>
+                </div>
+                <textarea id="notes" class="w-full h-full bg-transparent border-none outline-none text-slate-200 resize-none font-mono text-sm" placeholder="> Kezdj el gépelni..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-3 gap-8 h-40">
+                <div class="glass p-6"><h4 class="text-xs text-slate-500 uppercase">CPU Load</h4><div class="mt-2 text-2xl font-mono text-cyan-400" id="cpu">12%</div></div>
+                <div class="glass p-6"><h4 class="text-xs text-slate-500 uppercase">RAM Usage</h4><div class="mt-2 text-2xl font-mono text-purple-400" id="ram">4.2 GB</div></div>
+                <div class="glass p-6"><h4 class="text-xs text-slate-500 uppercase">Tunnel Status</h4><div class="mt-2 text-2xl font-mono text-emerald-400">ACTIVE</div></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Idő és Monitorok
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+            document.getElementById('cpu').innerText = Math.floor(Math.random() * 20 + 5) + '%';
+        }, 1000);
+
+        // Egér és Notes
+        document.addEventListener('mousemove', (e) => {
+            const g = document.getElementById('glow');
+            g.style.left = (e.clientX - 200) + 'px'; g.style.top = (e.clientY - 200) + 'px';
+        });
+
+        const notes = document.getElementById('notes');
+        notes.value = localStorage.getItem('hub-notes') || '> Marci Hub v2.0\n> All systems functional';
+        notes.addEventListener('input', () => localStorage.setItem('hub-notes', notes.value));
+
+        function exportNotes() {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([notes.value], { type: 'text/plain' }));
+            a.download = 'Marci_Hub_Notes.txt'; a.click();
+        }
+        
+        // Gyorskereső figyelő
+        document.addEventListener('keydown', (e) => { if(e.ctrlKey && e.key === 'k') alert('Kereső funkció aktiválva!'); });
+    </script>
+</body>
+</html>
