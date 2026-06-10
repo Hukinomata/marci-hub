@@ -93,37 +93,36 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 
-    <script>
-        // 1. IDE ÍRD BE A KÉPEK FÁJLNEVEIT (BÁRMENNYIT BÍR)
-        const kepek = [
-            "elso_kep.jpg",
-            "tarsas.png",
-            "tarsastabla.png",
+<script>
+    // A képeid listája
+    const kepek = [
+        "elso_kep.jpg",
+        "masodik_kep.jpg"
+    ];
 
-            // Ha van 600 képed, csak ide kell bemásolni a neveiket
-        ];
+    const galeriaContainer = document.getElementById("galeria");
 
-        const galeriaContainer = document.getElementById("galeria");
+    // A JavaScript itt most az oldal pontos címét használja a képek eléréséhez
+    const baseUrl = window.location.origin; 
 
-        // 2. A képek automatikus legenerálása a háttérben
-        kepek.forEach(kepNev => {
-            const card = document.createElement("a");
-            card.href = `kepek/${kepNev}`;
-            card.setAttribute("data-fancybox", "gallery");
-            card.className = "media-card";
+    kepek.forEach(kepNev => {
+        const card = document.createElement("a");
+        // A teljes elérési út: domain + mappa + fájlnév
+        card.href = `${baseUrl}/kepek/${kepNev}`;
+        card.setAttribute("data-fancybox", "gallery");
+        card.className = "media-card";
 
-            const img = document.createElement("img");
-            img.src = `kepek/${kepNev}`;
-            img.alt = "Közös emlék";
-            img.loading = "lazy"; // <--- EZ A LUSTA BETÖLTÉS LELKE, kíméli a netet!
+        const img = document.createElement("img");
+        img.src = `${baseUrl}/kepek/${kepNev}`;
+        img.alt = "Közös emlék";
+        img.loading = "lazy";
 
-            card.appendChild(img);
-            galeriaContainer.appendChild(card);
-        });
+        card.appendChild(img);
+        galeriaContainer.appendChild(card);
+    });
 
-        // 3. Fancybox elindítása
-        Fancybox.bind("[data-fancybox='gallery']", {});
-    </script>
+    Fancybox.bind("[data-fancybox='gallery']", {});
+</script>
 </body>
 
 </html>
