@@ -48,7 +48,6 @@
             border-left: 4px solid #58a6ff;
         }
 
-        /* Modern Grid a médiatartalmaknak */
         .media-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -74,33 +73,8 @@
             height: 250px;
             object-fit: cover;
             display: block;
-        }
-
-        /* Videó kártya egyedi stílusa a lejátszás ikonnal */
-        .video-card .video-overlay {
-            position: relative;
-        }
-
-        .video-card .video-overlay::after {
-            content: '▶';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(88, 166, 255, 0.8);
-            color: white;
-            font-size: 2rem;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
-        }
-
-        .media-card:hover .video-overlay::after {
-            background: rgba(88, 166, 255, 1);
+            background: #21262d;
+            /* Amíg tölt a kép, egy szürke háttér jelenik meg */
         }
     </style>
 </head>
@@ -114,34 +88,41 @@
 
     <main>
         <div class="section-title">📸 Közös Galéria</div>
-        <div class="media-grid">
-
-            <a href="kepek/elso_kep.jpg" data-fancybox="gallery" class="media-card">
-                <img src="kepek/elso_kep.jpg" alt="Közös emlék">
-            </a>
-
-        </div>
-
-        <div class="section-title">🎬 Közös Médiatár</div>
-        <div class="media-grid">
-
-            <a href="https://drive.google.com/uc?export=view&id=ID_HELYE" data-fancybox="gallery"
-                class="media-card video-card">
-                <div class="video-overlay">
-                    <img src="https://drive.google.com/uc?export=view&id=1XqQ4h2sahQ2Jpuh0cecLgslsYTl3ezCW"
-                        alt="Videó borító">
-                </div>
-            </a>
-
-        </div>
+        <div id="galeria" class="media-grid"></div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+
     <script>
-        // Fancybox inicializálása
-        Fancybox.bind("[data-fancybox='gallery']", {
-            // Itt adhatóak meg egyedi animációk vagy beállítások
+        // 1. IDE ÍRD BE A KÉPEK FÁJLNEVEIT (BÁRMENNYIT BÍR)
+        const kepek = [
+            "elso_kep.jpg",
+            "tarsas.png",
+            "tarsastabla.png",
+
+            // Ha van 600 képed, csak ide kell bemásolni a neveiket
+        ];
+
+        const galeriaContainer = document.getElementById("galeria");
+
+        // 2. A képek automatikus legenerálása a háttérben
+        kepek.forEach(kepNev => {
+            const card = document.createElement("a");
+            card.href = `kepek/${kepNev}`;
+            card.setAttribute("data-fancybox", "gallery");
+            card.className = "media-card";
+
+            const img = document.createElement("img");
+            img.src = `kepek/${kepNev}`;
+            img.alt = "Közös emlék";
+            img.loading = "lazy"; // <--- EZ A LUSTA BETÖLTÉS LELKE, kíméli a netet!
+
+            card.appendChild(img);
+            galeriaContainer.appendChild(card);
         });
+
+        // 3. Fancybox elindítása
+        Fancybox.bind("[data-fancybox='gallery']", {});
     </script>
 </body>
 
