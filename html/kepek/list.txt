@@ -1,0 +1,3 @@
+"elso_kep.jpg",
+"tarsas.png",
+"tarsastabla.png",
