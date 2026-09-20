@@ -5,30 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Üzenetek</title>
   <style>
-    :root[data-theme="light"] {
-      --bg: #f0f4f8;
-      --card-bg: #ffffff;
-      --text: #0f172a;
-      --text-muted: #64748b;
+    :root[data-theme="dark"] {
       --primary: #0284c7;
       --primary-hover: #0369a1;
-      --border: #cbd5e1;
-      --input-bg: #f8fafc;
-      --danger: #ef4444;
-      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    :root[data-theme="dark"] {
-      --bg: #060d17;
-      --card-bg: #0d192d;
+      --bg-top: #07172c;
+      --bg-mid: #040d1a;
+      --bg-bottom: #02070f;
+      --card-bg: #0c1e34;
+      --input-bg: #071424;
       --text: #f1f5f9;
       --text-muted: #94a3b8;
-      --primary: #0284c7;
-      --primary-hover: #38bdf8;
-      --border: #1a2c47;
-      --input-bg: #08101d;
       --danger: #ef4444;
-      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --border: #1e3a5f;
+      --header-border: #1e3a5f;
+      --shark-fill: #38bdf8;
+      --shark-opacity-1: 0.16;
+      --shark-opacity-2: 0.13;
+      --shark-opacity-3: 0.12;
+      --shark-opacity-4: 0.14;
+      --shark-shadow: drop-shadow(0 0 15px rgba(56, 189, 248, 0.2));
+      --modal-overlay: rgba(0, 0, 0, 0.75);
+    }
+
+    :root[data-theme="light"] {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --bg-top: #e0f2fe;
+      --bg-mid: #bae6fd;
+      --bg-bottom: #90cdf4;
+      --card-bg: #ffffff;
+      --input-bg: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --danger: #ef4444;
+      --border: #cbd5e1;
+      --header-border: rgba(203, 213, 225, 0.8);
+      --shark-fill: #0369a1;
+      --shark-opacity-1: 0.28;
+      --shark-opacity-2: 0.24;
+      --shark-opacity-3: 0.20;
+      --shark-opacity-4: 0.22;
+      --shark-shadow: drop-shadow(0 6px 12px rgba(2, 132, 199, 0.25));
+      --modal-overlay: rgba(15, 23, 42, 0.6);
     }
 
     * {
@@ -36,226 +54,299 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: var(--bg);
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 50%, var(--bg-bottom) 100%);
       color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 16px;
-      transition: background-color 0.25s, color 0.25s;
+      padding: 20px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .ocean-bg {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .shark {
+      position: absolute;
+      fill: var(--shark-fill);
+      filter: var(--shark-shadow);
+      transition: fill 0.3s ease, opacity 0.3s ease;
+    }
+
+    @keyframes swimLTR {
+      0% {
+        left: -320px;
+        transform: translateY(0) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-16px) rotate(2deg);
+      }
+      50% {
+        transform: translateY(14px) rotate(-1.5deg);
+      }
+      75% {
+        transform: translateY(-10px) rotate(1deg);
+      }
+      100% {
+        left: calc(100vw + 320px);
+        transform: translateY(0) rotate(0deg);
+      }
+    }
+
+    @keyframes swimRTL {
+      0% {
+        right: -320px;
+        transform: scaleX(-1) translateY(0) rotate(0deg);
+      }
+      25% {
+        transform: scaleX(-1) translateY(16px) rotate(2deg);
+      }
+      50% {
+        transform: scaleX(-1) translateY(-14px) rotate(-1.5deg);
+      }
+      75% {
+        transform: scaleX(-1) translateY(10px) rotate(1deg);
+      }
+      100% {
+        right: calc(100vw + 320px);
+        transform: scaleX(-1) translateY(0) rotate(0deg);
+      }
+    }
+
+    .shark-1 {
+      width: 250px;
+      top: 12%;
+      opacity: var(--shark-opacity-1);
+      animation: swimLTR 30s linear infinite;
+    }
+    .shark-2 {
+      width: 290px;
+      top: 36%;
+      opacity: var(--shark-opacity-2);
+      animation: swimRTL 36s linear infinite;
+      animation-delay: -14s;
+    }
+    .shark-3 {
+      width: 180px;
+      top: 62%;
+      opacity: var(--shark-opacity-3);
+      animation: swimLTR 24s linear infinite;
+      animation-delay: -6s;
+    }
+    .shark-4 {
+      width: 220px;
+      top: 84%;
+      opacity: var(--shark-opacity-4);
+      animation: swimRTL 28s linear infinite;
+      animation-delay: -19s;
     }
 
     .hidden { display: none !important; }
 
-    .app-header {
+    header {
       width: 100%;
-      max-width: 520px;
+      max-width: 820px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 16px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--header-border);
+      position: relative;
+      z-index: 10;
+      gap: 10px;
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .header-left h1 {
-      font-size: 1.35rem;
-      color: var(--text);
+    header h1 {
+      font-size: 1.4rem;
+      color: #38bdf8;
       font-weight: 700;
     }
 
     .badge {
-      background: rgba(2, 132, 199, 0.15);
-      color: var(--primary);
-      border: 1px solid var(--primary);
-      padding: 2px 8px;
-      border-radius: 12px;
+      background: var(--input-bg);
+      color: #38bdf8;
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 6px;
       font-size: 0.72rem;
       font-weight: 600;
+      margin-left: 8px;
     }
 
     .header-right {
       display: flex;
       align-items: center;
       gap: 8px;
-      position: static;
     }
 
-    .theme-toggle-box {
+    .theme-switcher {
       display: flex;
-      align-items: center;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 2px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .theme-opt {
-      padding: 4px 8px;
-      font-size: 0.8rem;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      opacity: 0.45;
-      transition: opacity 0.2s, background 0.2s;
-    }
-
-    .theme-opt.active {
-      opacity: 1;
+      gap: 3px;
       background: var(--card-bg);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    .btn-logout {
-      background: rgba(239, 68, 68, 0.15);
-      color: var(--danger);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      border-radius: 10px;
+    .theme-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 5px 8px;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      width: auto;
       white-space: nowrap;
+    }
+
+    .theme-btn:hover {
+      color: var(--text);
+    }
+
+    .theme-btn.active {
+      background: var(--input-bg);
+      color: #38bdf8;
+      border-color: var(--border);
+      font-weight: bold;
     }
 
     .card {
       background: var(--card-bg);
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      z-index: 1;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      font-size: 16px;
+      background: var(--input-bg);
+      color: var(--text);
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #38bdf8;
+    }
+    textarea { resize: vertical; min-height: 85px; }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.15s;
+      width: 100%;
+    }
+    button:hover { background: var(--primary-hover); }
+    button.secondary {
+      background: var(--input-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      width: auto;
+      padding: 7px 12px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    button.secondary:hover { background: var(--card-bg); }
+    button.danger {
+      background: var(--danger);
+      width: auto;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+    }
+    button.danger:hover { background: #dc2626; }
+
+    #admin-panel {
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 18px;
-      box-shadow: var(--card-shadow);
+      padding: 20px;
       width: 100%;
-      max-width: 520px;
-      margin-bottom: 16px;
+      max-width: 820px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
-
-    .login-card {
-      max-width: 360px;
-      margin-top: 40px;
-      text-align: center;
+    #admin-panel h2 {
+      margin-bottom: 14px;
+      font-size: 1.15rem;
+      color: #38bdf8;
     }
-
-    .field {
-      margin-bottom: 12px;
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background-color: var(--input-bg);
-      color: var(--text);
-      outline: none;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--primary);
-    }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    input[type="file"] {
-      width: 100%;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      width: 100%;
-      cursor: pointer;
-    }
-    .btn-primary:active { opacity: 0.85; }
 
     .gift-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
       width: 100%;
-      max-width: 520px;
+      max-width: 820px;
+      position: relative;
+      z-index: 1;
     }
 
     .gift-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 12px;
+      border-radius: 16px;
+      padding: 18px 12px;
       text-align: center;
       cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transition: transform 0.15s, border-color 0.15s;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      min-height: 135px;
-      box-shadow: var(--card-shadow);
+      min-height: 140px;
     }
-    .gift-card:active { transform: scale(0.98); }
-
+    .gift-card:active {
+      transform: scale(0.98);
+    }
     .gift-icon {
-      font-size: 2.6rem;
+      font-size: 2.4rem;
       margin-bottom: 6px;
     }
-
     .gift-title {
-      font-size: 0.95rem;
       font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text);
       word-break: break-word;
-    }
-
-    .btn-delete {
-      background: var(--danger);
-      color: white;
-      border: none;
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-top: 8px;
-      cursor: pointer;
     }
 
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: var(--modal-overlay);
       backdrop-filter: blur(3px);
       display: flex;
       justify-content: center;
@@ -263,151 +354,161 @@
       padding: 16px;
       z-index: 1000;
     }
-
     .modal-content {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 18px;
-      max-width: 440px;
+      max-width: 480px;
       width: 100%;
       max-height: 85vh;
       overflow-y: auto;
       padding: 20px;
+      position: relative;
       text-align: center;
     }
-
     .modal-text {
       white-space: pre-wrap;
       text-align: left;
       line-height: 1.5;
-      font-size: 0.95rem;
       margin: 14px 0;
+      color: var(--text);
+      font-size: 0.92rem;
     }
 
     .gallery {
       position: relative;
       width: 100%;
-      height: 240px;
-      background: #000;
-      border-radius: 10px;
+      height: 250px;
+      background: #030a16;
+      border-radius: 12px;
       overflow: hidden;
-      margin: 12px 0;
+      margin: 14px 0;
+      border: 1px solid var(--border);
     }
-
     .gallery img {
       width: 100%;
       height: 100%;
       object-fit: contain;
     }
-
     .gallery-btn {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.55);
-      color: #fff;
-      border: none;
-      width: 34px;
-      height: 34px;
+      background: rgba(15, 23, 42, 0.75);
+      color: white;
+      border: 1px solid var(--border);
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 1.1rem;
     }
     .gallery-btn.prev { left: 8px; }
     .gallery-btn.next { right: 8px; }
-
     .gallery-counter {
       position: absolute;
       bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.65);
-      color: #fff;
-      padding: 2px 8px;
+      background: rgba(7, 23, 44, 0.85);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 10px;
       border-radius: 10px;
       font-size: 0.75rem;
     }
 
-    .btn-secondary {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px;
-      border-radius: 10px;
-      width: 100%;
-      font-size: 0.9rem;
-      cursor: pointer;
-      margin-top: 10px;
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 12px;
+      }
+      header h1 {
+        font-size: 1.25rem;
+      }
+      .gift-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .gift-card {
+        padding: 14px 8px;
+        min-height: 130px;
+      }
+      .card, #admin-panel {
+        padding: 18px 14px;
+      }
+      .gallery {
+        height: 220px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div id="login-view" class="card login-card">
-    <h2 style="margin-bottom: 6px;">Belépés ✨</h2>
-    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">Jelentkezz be az üzenetekhez</p>
-    
-    <div class="field">
-      <input type="email" id="login-email" placeholder="E-mail cím" autocomplete="email" />
-    </div>
-    <div class="field">
-      <input type="password" id="login-password" placeholder="Jelszó" />
-    </div>
+  <div class="ocean-bg">
+    <svg class="shark shark-1" viewBox="-10 0 220 80">
+      <path d="M 200,40 C 190,32 165,28 140,28 C 134,16 128,2 118,2 C 112,4 115,16 120,29 C 98,30 75,32 55,35 C 48,30 42,26 36,26 C 34,28 36,33 40,36 C 28,37 20,38 12,39 L -4,12 C 0,26 4,36 8,39.5 L 6,40 L 8,40.5 C 4,44 0,54 -4,68 L 12,41 C 20,42 28,43 40,44 C 36,47 34,52 36,54 C 42,54 48,50 55,45 C 75,48 98,50 120,51 C 115,64 112,76 118,78 C 128,78 134,64 140,52 C 165,52 190,48 200,40 Z" />
+    </svg>
 
-    <button class="btn-primary" id="btn-login">Bejelentkezés</button>
-    <p id="login-error" style="color: #ef4444; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
+    <svg class="shark shark-2" viewBox="-10 0 220 80">
+      <path d="M 196,35 C 196,22 192,10 184,8 C 178,6 172,12 175,20 C 175,26 168,29 148,29 C 142,18 134,4 124,4 C 118,6 120,18 126,30 C 102,31 78,33 55,35 C 48,30 42,26 36,26 C 34,28 36,33 40,36 C 28,37 20,38 12,39 L -4,12 C 0,26 4,36 8,39.5 L 6,40 L 8,40.5 C 4,44 0,54 -4,68 L 12,41 C 20,42 28,43 40,44 C 36,47 34,52 36,54 C 42,54 48,50 55,45 C 78,47 102,49 126,50 C 120,62 118,74 124,76 C 134,76 142,62 148,51 C 168,51 175,54 175,60 C 172,68 178,74 184,72 C 192,70 196,58 196,45 Z" />
+    </svg>
+
+    <svg class="shark shark-3" viewBox="-10 0 220 80">
+      <path d="M 196,35 C 196,22 192,10 184,8 C 178,6 172,12 175,20 C 175,26 168,29 148,29 C 142,18 134,4 124,4 C 118,6 120,18 126,30 C 102,31 78,33 55,35 C 48,30 42,26 36,26 C 34,28 36,33 40,36 C 28,37 20,38 12,39 L -4,12 C 0,26 4,36 8,39.5 L 6,40 L 8,40.5 C 4,44 0,54 -4,68 L 12,41 C 20,42 28,43 40,44 C 36,47 34,52 36,54 C 42,54 48,50 55,45 C 78,47 102,49 126,50 C 120,62 118,74 124,76 C 134,76 142,62 148,51 C 168,51 175,54 175,60 C 172,68 178,74 184,72 C 192,70 196,58 196,45 Z" />
+    </svg>
+
+    <svg class="shark shark-4" viewBox="-10 0 220 80">
+      <path d="M 200,40 C 190,32 165,28 140,28 C 134,16 128,2 118,2 C 112,4 115,16 120,29 C 98,30 75,32 55,35 C 48,30 42,26 36,26 C 34,28 36,33 40,36 C 28,37 20,38 12,39 L -4,12 C 0,26 4,36 8,39.5 L 6,40 L 8,40.5 C 4,44 0,54 -4,68 L 12,41 C 20,42 28,43 40,44 C 36,47 34,52 36,54 C 42,54 48,50 55,45 C 75,48 98,50 120,51 C 115,64 112,76 118,78 C 128,78 134,64 140,52 C 165,52 190,48 200,40 Z" />
+    </svg>
+  </div>
+
+  <header>
+    <div style="display: flex; align-items: center;">
+      <h1>Üzenetek</h1>
+      <span id="admin-badge" class="badge hidden">Admin</span>
+    </div>
+    <div class="header-right">
+      <div class="theme-switcher">
+        <button id="theme-light-btn" class="theme-btn" title="Világos víz (Sekély)">☀️ 🦈</button>
+        <button id="theme-dark-btn" class="theme-btn active" title="Sötét víz (Mély)">🌑 🦈</button>
+      </div>
+      <button class="secondary hidden" id="btn-logout">Kijelentkezés</button>
+    </div>
+  </header>
+
+  <div id="login-view" class="card">
+    <h2 style="text-align: center; margin-bottom: 16px; color: #38bdf8;">Bejelentkezés</h2>
+    <input type="email" id="login-email" placeholder="E-mail cím" autocomplete="email" />
+    <input type="password" id="login-password" placeholder="Jelszó" />
+    <button id="btn-login">Belépés</button>
+    <p id="login-error" style="color: var(--danger); font-size: 0.85rem; margin-top: 10px; text-align: center; display: none;"></p>
   </div>
 
   <div id="app-view" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-    
-    <header class="app-header">
-      <div class="header-left">
-        <h1>Üzenetek</h1>
-        <span id="admin-badge" class="badge hidden">Admin</span>
-      </div>
-      <div class="header-right">
-        <div class="theme-toggle-box" id="theme-toggle">
-          <div class="theme-opt" id="opt-light">☀️ 🦈</div>
-          <div class="theme-opt active" id="opt-dark">🌚 🦈</div>
-        </div>
-        <button id="btn-logout" class="btn-logout">Kilépés</button>
-      </div>
-    </header>
-
-    <div id="admin-panel" class="card hidden">
-      <h2 style="font-size: 1.15rem; margin-bottom: 14px;">Új üzenet hozzáadása</h2>
+    <div id="admin-panel" class="hidden">
+      <h2>Új üzenet hozzáadása</h2>
+      <input type="text" id="gift-title-input" placeholder="Cím" />
       
-      <div class="field">
-        <input type="text" id="gift-title-input" placeholder="Cím" />
-      </div>
+      <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Ikon:</label>
+      <select id="gift-icon-input">
+        <option value="🦈">🦈 Cápa</option>
+        <option value="🎁">🎁 Ajándék</option>
+        <option value="💌">💌 Levél</option>
+        <option value="🌊">🌊 Hullám</option>
+        <option value="⭐">⭐ Csillag</option>
+        <option value="☕">☕ Kávé</option>
+      </select>
 
-      <div class="field">
-        <label>Ikon:</label>
-        <select id="gift-icon-input">
-          <option value="🦈">🦈 Cápa</option>
-          <option value="🎁">🎁 Ajándék</option>
-          <option value="💌">💌 Levél</option>
-          <option value="💖">💖 Szív</option>
-          <option value="🧸">🧸 Maci</option>
-          <option value="☕">☕ Kávé</option>
-          <option value="🌟">🌟 Csillag</option>
-        </select>
-      </div>
+      <textarea id="gift-message-input" placeholder="Üzenet szövege..."></textarea>
+      
+      <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 6px;">Képek csatolása:</label>
+      <input type="file" id="gift-files-input" accept="image/*" multiple />
 
-      <div class="field">
-        <textarea id="gift-message-input" placeholder="Üzenet szövege..."></textarea>
-      </div>
-
-      <div class="field">
-        <label>Képek csatolása:</label>
-        <input type="file" id="gift-files-input" accept="image/*" multiple />
-      </div>
-
-      <button class="btn-primary" id="btn-create-gift">Mentés</button>
-      <p id="upload-status" style="font-size: 0.85rem; margin-top: 8px; color: var(--primary); text-align: center;"></p>
+      <button id="btn-create-gift">Mentés</button>
+      <p id="upload-status" style="font-size: 0.85rem; margin-top: 10px; font-weight: 600; text-align: center;"></p>
     </div>
 
     <div id="gift-grid" class="gift-grid"></div>
@@ -415,7 +516,7 @@
 
   <div id="gift-modal" class="modal-backdrop hidden">
     <div class="modal-content">
-      <h2 id="modal-title" style="color: var(--primary); font-size: 1.25rem;"></h2>
+      <h2 id="modal-title" style="color: #38bdf8;"></h2>
       <p id="modal-message" class="modal-text"></p>
 
       <div id="modal-gallery" class="gallery hidden">
@@ -425,7 +526,7 @@
         <div class="gallery-counter" id="gallery-counter">1 / 1</div>
       </div>
 
-      <button class="btn-secondary" id="modal-close">Bezárás</button>
+      <button class="secondary" id="modal-close" style="width: 100%; margin-top: 10px;">Bezárás</button>
     </div>
   </div>
 
@@ -455,16 +556,38 @@
       getDownloadURL 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
+    const lightBtn = document.getElementById("theme-light-btn");
+    const darkBtn = document.getElementById("theme-dark-btn");
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("app-theme", theme);
+      if (theme === "light") {
+        lightBtn.classList.add("active");
+        darkBtn.classList.remove("active");
+      } else {
+        darkBtn.classList.add("active");
+        lightBtn.classList.remove("active");
+      }
+    }
+
+    const savedTheme = localStorage.getItem("app-theme") || "dark";
+    setTheme(savedTheme);
+
+    lightBtn.addEventListener("click", () => setTheme("light"));
+    darkBtn.addEventListener("click", () => setTheme("dark"));
+
     const firebaseConfig = {
-      apiKey: "IDE_MASOLD_AZ_API_KEYT",
-      authDomain: "PROJEKTED.firebaseapp.com",
-      projectId: "PROJEKTED",
-      storageBucket: "PROJEKTED.appspot.com",
-      messagingSenderId: "SZAMOK",
-      appId: "APP_ID"
+      apiKey: "AIzaSyC5ql8zUjsVFAN5yKfUjCBwfYU-90JnDEM",
+      authDomain: "webdada.firebaseapp.com",
+      projectId: "webdada",
+      storageBucket: "webdada.firebasestorage.app",
+      messagingSenderId: "789381821225",
+      appId: "1:789381821225:web:f7956d172d8621a6f7fd38",
+      measurementId: "G-V2M42ZN06D"
     };
 
-    const ADMIN_EMAIL = "te_email_cimed@gmail.com";
+    const ADMIN_EMAIL = "momaycsarton@gmail.com";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -475,40 +598,17 @@
     let modalImages = [];
     let modalImageIndex = 0;
 
-    const htmlEl = document.documentElement;
-    const themeBox = document.getElementById("theme-toggle");
-    const optLight = document.getElementById("opt-light");
-    const optDark = document.getElementById("opt-dark");
-
-    function applyTheme(theme) {
-      htmlEl.setAttribute("data-theme", theme);
-      localStorage.setItem("theme", theme);
-      if (theme === "dark") {
-        optDark.classList.add("active");
-        optLight.classList.remove("active");
-      } else {
-        optLight.classList.add("active");
-        optDark.classList.remove("active");
-      }
-    }
-
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    applyTheme(savedTheme);
-
-    themeBox.addEventListener("click", () => {
-      const current = htmlEl.getAttribute("data-theme");
-      applyTheme(current === "dark" ? "light" : "dark");
-    });
-
     onAuthStateChanged(auth, (user) => {
       const loginView = document.getElementById("login-view");
       const appView = document.getElementById("app-view");
       const adminPanel = document.getElementById("admin-panel");
       const adminBadge = document.getElementById("admin-badge");
+      const btnLogout = document.getElementById("btn-logout");
 
       if (user) {
         loginView.classList.add("hidden");
         appView.classList.remove("hidden");
+        btnLogout.classList.remove("hidden");
 
         const isAdmin = user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
         if (isAdmin) {
@@ -523,6 +623,7 @@
       } else {
         loginView.classList.remove("hidden");
         appView.classList.add("hidden");
+        btnLogout.classList.add("hidden");
       }
     });
 
@@ -535,7 +636,7 @@
       try {
         await signInWithEmailAndPassword(auth, email, pass);
       } catch (err) {
-        errEl.textContent = "Hibás adatok!";
+        errEl.textContent = "Hibás e-mail cím vagy jelszó.";
         errEl.style.display = "block";
       }
     });
@@ -557,14 +658,16 @@
           const card = document.createElement("div");
           card.className = "gift-card";
           card.innerHTML = `
-            <div onclick="window.openGiftModal('${item.id}')" style="width: 100%;">
+            <div style="width: 100%; cursor: pointer;" onclick="window.openGiftModal('${item.id}')">
               <div class="gift-icon">${item.icon || "🦈"}</div>
               <div class="gift-title">${item.title}</div>
             </div>
-            ${isAdmin ? `<button class="btn-delete" onclick="window.deleteGift('${item.id}')">Törlés</button>` : ""}
+            ${isAdmin ? `<button class="danger" style="margin-top: 12px;" onclick="window.deleteGift('${item.id}')">Törlés</button>` : ""}
           `;
           grid.appendChild(card);
         });
+      }, (error) => {
+        console.error("Firestore hiba:", error);
       });
     }
 
@@ -576,24 +679,28 @@
       const status = document.getElementById("upload-status");
 
       if (!title || !message) {
-        alert("Cím és üzenet megadása kötelező!");
+        alert("A cím és az üzenet megadása kötelező.");
         return;
       }
 
-      status.textContent = "Mentés folyamatban...";
+      status.style.color = "#38bdf8";
+      status.textContent = files.length > 0 ? "Feltöltés folyamatban..." : "Mentés folyamatban...";
       const uploadedUrls = [];
 
       try {
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           status.textContent = `Kép feltöltése (${i + 1}/${files.length})...`;
-          const fileRef = ref(storage, `gifts/${Date.now()}_${file.name}`);
-          await uploadBytes(fileRef, file);
-          const url = await getDownloadURL(fileRef);
-          uploadedUrls.push(url);
+          
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const storageReference = ref(storage, `gifts/${Date.now()}_${safeName}`);
+          
+          await uploadBytes(storageReference, file);
+          const downloadUrl = await getDownloadURL(storageReference);
+          uploadedUrls.push(downloadUrl);
         }
 
-        status.textContent = "Rögzítés...";
+        status.textContent = "Mentés az adatbázisba...";
         await addDoc(collection(db, "gifts"), {
           title,
           icon,
@@ -605,17 +712,18 @@
         document.getElementById("gift-title-input").value = "";
         document.getElementById("gift-message-input").value = "";
         document.getElementById("gift-files-input").value = "";
-        status.textContent = "Sikeresen mentve!";
-        setTimeout(() => status.textContent = "", 2500);
+        status.textContent = "Üzenet mentve.";
+        setTimeout(() => status.textContent = "", 3000);
 
       } catch (err) {
         console.error(err);
-        status.textContent = "Hiba történt!";
+        status.style.color = "var(--danger)";
+        status.textContent = "Hiba történt: " + (err.message || err.code);
       }
     });
 
     window.deleteGift = async (id) => {
-      if (confirm("Biztosan törlöd?")) {
+      if (confirm("Biztosan törölni szeretnéd ezt az üzenetet?")) {
         await deleteDoc(doc(db, "gifts", id));
       }
     };
