@@ -1,55 +1,580 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marci Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
-     
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neked ❤️</title>
     <style>
+        :root {
+            --primary: #ff5e7e;
+            --primary-hover: #ff4769;
+            --bg: #fff5f7;
+            --card-bg: #ffffff;
+            --text: #2d3436;
+            --text-muted: #636e72;
+            --danger: #ff4d4d;
+            --border: #f0e2e5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
         body {
-            background-color: #08090c;
-            font-family: 'Orbitron', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
-        /* Finom pulzáló animáció a háttér izzásának */
-        @keyframes pulseGlow {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; }
-            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.25; }
+
+        .hidden {
+            display: none !important;
         }
-        .bg-glow {
-            animation: pulseGlow 8s infinite ease-in-out;
+
+        /* Navigáció / Fejléc */
+        header {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .badge {
+            background: #ffeaa7;
+            color: #d63031;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        /* Kártyák és Konténerek */
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Űrlap elemek */
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button.secondary {
+            background: #dfe6e9;
+            color: var(--text);
+            width: auto;
+            padding: 8px 14px;
+        }
+
+        button.danger {
+            background: var(--danger);
+            width: auto;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+
+        /* Admin Panel */
+        #admin-panel {
+            background: #ffffff;
+            border: 2px dashed var(--primary);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 30px;
+        }
+
+        #admin-panel h2 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        /* Ajándék Rács */
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .gift-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 150px;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(255, 94, 126, 0.2);
+        }
+
+        .gift-icon {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+        }
+
+        .gift-title {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* Modal felugró ablak */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            position: relative;
+        }
+
+        .modal-text {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            margin: 16px 0;
+            color: #4a4a4a;
+        }
+
+        /* Galéria lapozó */
+        .gallery {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .gallery-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .gallery-btn.prev {
+            left: 10px;
+        }
+
+        .gallery-btn.next {
+            right: 10px;
+        }
+
+        .gallery-counter {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
         }
     </style>
 </head>
-<body class="relative flex items-center justify-center min-h-screen overflow-hidden text-white">
 
-    <div class="bg-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-orange-600 rounded-full blur-[100px] md:blur-[160px] pointer-events-none z-0"></div>
+<body>
 
-    <div class="relative z-10 flex flex-col items-center justify-center select-none">
-        <div id="clock" class="text-6xl sm:text-8xl md:text-[11rem] font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-red-500 to-amber-500 drop-shadow-[0_0_35px_rgba(249,115,22,0.5)]">
-            00:00:00
+    <!-- 1. Bejelentkező felület -->
+    <div id="login-view" class="card">
+        <h2 style="text-align: center; margin-bottom: 16px;">Nyisd ki, ha... ✨</h2>
+        <input type="email" id="login-email" placeholder="E-mail cím" />
+        <input type="password" id="login-password" placeholder="Jelszó" />
+        <button id="btn-login">Belépés</button>
+        <p id="login-error" style="color: red; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
+    </div>
+
+    <!-- 2. Főoldal (Belépés után) -->
+    <div id="app-view" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+
+        <header>
+            <div>
+                <h1 style="display: inline-block;">Üzeneteim Neked</h1>
+                <span id="admin-badge" class="badge hidden">Admin mód</span>
+            </div>
+            <button class="secondary" id="btn-logout">Kijelentkezés</button>
+        </header>
+
+        <!-- Adminisztrátori szerkesztő felület -->
+        <div id="admin-panel" class="hidden">
+            <h2>Új ajándékdoboz létrehozása</h2>
+            <input type="text" id="gift-title-input" placeholder="Cím (pl. Nyisd ki, ha szomorú vagy...)" />
+
+            <label style="font-size: 0.85rem; color: var(--text-muted);">Válassz ikont:</label>
+            <select id="gift-icon-input">
+                <option value="🎁">🎁 Ajándékdoboz</option>
+                <option value="💌">💌 Levél</option>
+                <option value="💖">💖 Szív</option>
+                <option value="🧸">🧸 Maci</option>
+                <option value="☕">☕ Kávé / Tea</option>
+                <option value="🌟">🌟 Csillag</option>
+            </select>
+
+            <textarea id="gift-message-input" placeholder="Kedves üzenet, amit látni fog..."></textarea>
+
+            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Képek
+                kiválasztása (több is kijelölhető):</label>
+            <input type="file" id="gift-files-input" accept="image/*" multiple />
+
+            <button id="btn-create-gift">Ajándék mentése és feltöltése</button>
+            <p id="upload-status" style="font-size: 0.85rem; margin-top: 8px; color: var(--primary);"></p>
+        </div>
+
+        <!-- Ajándékdobozok rácsa -->
+        <div id="gift-grid" class="gift-grid"></div>
+    </div>
+
+    <!-- 3. Felugró ablak (Modal) a megnyitott ajándékhoz -->
+    <div id="gift-modal" class="modal-backdrop hidden">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color: var(--primary);"></h2>
+            <p id="modal-message" class="modal-text"></p>
+
+            <!-- Galéria konténer -->
+            <div id="modal-gallery" class="gallery hidden">
+                <img id="gallery-img" src="" alt="Kép" />
+                <button class="gallery-btn prev" id="gallery-prev">❮</button>
+                <button class="gallery-btn next" id="gallery-next">❯</button>
+                <div class="gallery-counter" id="gallery-counter">1 / 1</div>
+            </div>
+
+            <button class="secondary" id="modal-close" style="width: 100%; margin-top: 10px;">Bezárás</button>
         </div>
     </div>
 
-    <script>
-        function updateClock() {
-            const now = new Date();
-            
-            // Óra, perc, másodperc kinyerése és kétjegyűvé formázása
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            
-            // Kiírás a képernyőre
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+    <!-- Firebase v10 Integráció -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            deleteDoc,
+            doc,
+            onSnapshot,
+            query,
+            orderBy,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import {
+            getStorage,
+            ref,
+            uploadBytes,
+            getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+        // ==========================================
+        // 1. BEÁLLÍTÁSOK (Ide másold a Firebase adataidat)
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5ql8zUjsVFAN5yKfUjCBwfYU-90JnDEM",
+            authDomain: "webdada.firebaseapp.com",
+            projectId: "webdada",
+            storageBucket: "webdada.firebasestorage.app",
+            messagingSenderId: "789381821225",
+            appId: "1:789381821225:web:f7956d172d8621a6f7fd38",
+            measurementId: "G-V2M42ZN06D"
+        };
+        // A Te e-mail címed (ő lesz az admin):
+        const ADMIN_EMAIL = "momaycsarton@gmail.com";
+
+        // Firebase Inicializálás
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let currentUser = null;
+        let currentGifts = [];
+        let modalImages = [];
+        let modalImageIndex = 0;
+
+        // ==========================================
+        // 2. HITELÉSÍTÉS ÉS NÉZETVÁLTÁS
+        // ==========================================
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const loginView = document.getElementById("login-view");
+            const appView = document.getElementById("app-view");
+            const adminPanel = document.getElementById("admin-panel");
+            const adminBadge = document.getElementById("admin-badge");
+
+            if (user) {
+                loginView.classList.add("hidden");
+                appView.classList.remove("hidden");
+
+                const isAdmin = user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+                if (isAdmin) {
+                    adminPanel.classList.remove("hidden");
+                    adminBadge.classList.remove("hidden");
+                } else {
+                    adminPanel.classList.add("hidden");
+                    adminBadge.classList.add("hidden");
+                }
+
+                listenToGifts(isAdmin);
+            } else {
+                loginView.classList.remove("hidden");
+                appView.classList.add("hidden");
+            }
+        });
+
+        // Belépés kezelése
+        document.getElementById("btn-login").addEventListener("click", async () => {
+            const email = document.getElementById("login-email").value.trim();
+            const pass = document.getElementById("login-password").value;
+            const errEl = document.getElementById("login-error");
+            errEl.style.display = "none";
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                errEl.textContent = "Hibás e-mail cím vagy jelszó!";
+                errEl.style.display = "block";
+            }
+        });
+
+        // Kijelentkezés
+        document.getElementById("btn-logout").addEventListener("click", () => signOut(auth));
+
+        // ==========================================
+        // 3. ADATBÁZIS FIGYELÉSE (REAL-TIME)
+        // ==========================================
+        function listenToGifts(isAdmin) {
+            const q = query(collection(db, "gifts"), orderBy("createdAt", "desc"));
+
+            onSnapshot(q, (snapshot) => {
+                currentGifts = [];
+                const grid = document.getElementById("gift-grid");
+                grid.innerHTML = "";
+
+                snapshot.forEach((docSnap) => {
+                    const item = { id: docSnap.id, ...docSnap.data() };
+                    currentGifts.push(item);
+
+                    // Doboz kártya felépítése
+                    const card = document.createElement("div");
+                    card.className = "gift-card";
+                    card.innerHTML = `
+            <div onclick="window.openGiftModal('${item.id}')">
+              <div class="gift-icon">${item.icon || "🎁"}</div>
+              <div class="gift-title">${item.title}</div>
+            </div>
+            ${isAdmin ? `<button class="danger" style="margin-top: 10px;" onclick="window.deleteGift('${item.id}')">Törlés</button>` : ""}
+          `;
+                    grid.appendChild(card);
+                });
+            });
         }
 
-        // Azonnali indítás és másodpercenkénti frissítés
-        updateClock();
-        setInterval(updateClock, 1000);
+        // ==========================================
+        // 4. ADMIN: ÚJ AJÁNDÉK ÉS KÉPFELTÖLTÉS
+        // ==========================================
+        document.getElementById("btn-create-gift").addEventListener("click", async () => {
+            const title = document.getElementById("gift-title-input").value.trim();
+            const icon = document.getElementById("gift-icon-input").value;
+            const message = document.getElementById("gift-message-input").value.trim();
+            const files = document.getElementById("gift-files-input").files;
+            const status = document.getElementById("upload-status");
+
+            if (!title || !message) {
+                alert("A cím és az üzenet megadása kötelező!");
+                return;
+            }
+
+            status.textContent = "Feltöltés folyamatban...";
+            const uploadedUrls = [];
+
+            try {
+                // Képek feltöltése a Storage-ba egymás után
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    status.textContent = `Kép feltöltése (${i + 1}/${files.length})...`;
+                    const fileRef = ref(storage, `gifts/${Date.now()}_${file.name}`);
+                    await uploadBytes(fileRef, file);
+                    const url = await getDownloadURL(fileRef);
+                    uploadedUrls.push(url);
+                }
+
+                status.textContent = "Adatok mentése...";
+                await addDoc(collection(db, "gifts"), {
+                    title,
+                    icon,
+                    message,
+                    images: uploadedUrls,
+                    createdAt: serverTimestamp()
+                });
+
+                // Mezők ürítése
+                document.getElementById("gift-title-input").value = "";
+                document.getElementById("gift-message-input").value = "";
+                document.getElementById("gift-files-input").value = "";
+                status.textContent = "Sikeresen hozzáadva! ✨";
+                setTimeout(() => status.textContent = "", 3000);
+
+            } catch (err) {
+                console.error(err);
+                status.textContent = "Hiba történt a feltöltés során!";
+            }
+        });
+
+        // Ajándék törlése (globálissá téve a gombon lévő onclickhez)
+        window.deleteGift = async (id) => {
+            if (confirm("Biztosan törölni szeretnéd ezt a dobozt?")) {
+                await deleteDoc(doc(db, "gifts", id));
+            }
+        };
+
+        // ==========================================
+        // 5. MODAL ÉS KÉPGALÉRIA KEZELÉSE
+        // ==========================================
+        window.openGiftModal = (id) => {
+            const item = currentGifts.find((g) => g.id === id);
+            if (!item) return;
+
+            document.getElementById("modal-title").textContent = item.title;
+            document.getElementById("modal-message").textContent = item.message;
+
+            modalImages = item.images || [];
+            modalImageIndex = 0;
+
+            const galleryEl = document.getElementById("modal-gallery");
+            if (modalImages.length > 0) {
+                galleryEl.classList.remove("hidden");
+                updateGalleryUI();
+            } else {
+                galleryEl.classList.add("hidden");
+            }
+
+            document.getElementById("gift-modal").classList.remove("hidden");
+        };
+
+        function updateGalleryUI() {
+            document.getElementById("gallery-img").src = modalImages[modalImageIndex];
+            document.getElementById("gallery-counter").textContent = `${modalImageIndex + 1} / ${modalImages.length}`;
+
+            // Lapozógombok elrejtése, ha csak 1 kép van
+            const hasMultiple = modalImages.length > 1;
+            document.getElementById("gallery-prev").style.display = hasMultiple ? "flex" : "none";
+            document.getElementById("gallery-next").style.display = hasMultiple ? "flex" : "none";
+        }
+
+        document.getElementById("gallery-prev").addEventListener("click", () => {
+            modalImageIndex = (modalImageIndex - 1 + modalImages.length) % modalImages.length;
+            updateGalleryUI();
+        });
+
+        document.getElementById("gallery-next").addEventListener("click", () => {
+            modalImageIndex = (modalImageIndex + 1) % modalImages.length;
+            updateGalleryUI();
+        });
+
+        document.getElementById("modal-close").addEventListener("click", () => {
+            document.getElementById("gift-modal").classList.add("hidden");
+        });
     </script>
 </body>
+
 </html>
