@@ -474,7 +474,6 @@
       font-size: 0.75rem;
     }
 
-    /* MINIGAME ELEMEK */
     .game-modal-content {
       background: #040e1a;
       border: 2px solid #0284c7;
@@ -649,7 +648,6 @@
     </div>
   </div>
 
-  <!-- MINIGAME MODAL -->
   <div id="game-modal" class="modal-backdrop hidden">
     <div class="modal-content game-modal-content">
       <div class="game-header">
@@ -1008,7 +1006,7 @@
     });
 
     // ==========================================================
-    // CÁPÁS MINIGAME LOGIKA (FLAPPY SHARK)
+    // CÁPÁS MINIGAME LOGIKA (60 FPS FIX IDŐZÍTÉSSEL)
     // ==========================================================
     const gameModal = document.getElementById("game-modal");
     const btnOpenGame = document.getElementById("btn-open-game");
@@ -1044,6 +1042,10 @@
 
     let bubbles = [];
 
+    const TARGET_FPS = 60;
+    const FRAME_TIME = 1000 / TARGET_FPS;
+    let lastTime = 0;
+
     function resetGame() {
       shark.y = 190;
       shark.velocity = 0;
@@ -1068,17 +1070,12 @@
     }
 
     function sharkAction() {
-      if (gameState === "START") {
+      if (gameState === "START" || gameState === "GAMEOVER") {
         resetGame();
         gameState = "PLAY";
         shark.velocity = shark.swimStrength;
         spawnBubble(shark.x, shark.y);
       } else if (gameState === "PLAY") {
-        shark.velocity = shark.swimStrength;
-        spawnBubble(shark.x, shark.y);
-      } else if (gameState === "GAMEOVER") {
-        resetGame();
-        gameState = "PLAY";
         shark.velocity = shark.swimStrength;
         spawnBubble(shark.x, shark.y);
       }
@@ -1104,7 +1101,6 @@
       shark.rotation = targetRot;
       ctx.rotate(shark.rotation);
 
-      // Cápát jobbra fordítva rajzoljuk
       ctx.scale(-1, 1);
       ctx.font = "32px sans-serif";
       ctx.textAlign = "center";
@@ -1131,7 +1127,6 @@
         const p = pipes[i];
         p.x -= PIPE_SPEED;
 
-        // Ütközés vizsgálat
         const sharkRadius = 13;
         const isWithinX = (shark.x + sharkRadius > p.x) && (shark.x - sharkRadius < p.x + PIPE_WIDTH);
         const hitTop = shark.y - sharkRadius < p.top;
@@ -1141,7 +1136,6 @@
           triggerGameOver();
         }
 
-        // Pontszám növelés
         if (!p.passed && p.x + PIPE_WIDTH < shark.x) {
           p.passed = true;
           score++;
@@ -1154,7 +1148,6 @@
         }
       }
 
-      // Képernyőről lefutott csövek törlése
       pipes = pipes.filter((p) => p.x + PIPE_WIDTH > -10);
     }
 
@@ -1164,20 +1157,14 @@
       ctx.lineWidth = 2;
 
       for (const p of pipes) {
-        // Felső korall oszlop
         ctx.fillRect(p.x, 0, PIPE_WIDTH, p.top);
         ctx.strokeRect(p.x, 0, PIPE_WIDTH, p.top);
-
-        // Felső perem
         ctx.fillRect(p.x - 3, p.top - 12, PIPE_WIDTH + 6, 12);
         ctx.strokeRect(p.x - 3, p.top - 12, PIPE_WIDTH + 6, 12);
 
-        // Alsó korall oszlop
         const bottomY = canvas.height - p.bottom;
         ctx.fillRect(p.x, bottomY, PIPE_WIDTH, p.bottom);
         ctx.strokeRect(p.x, bottomY, PIPE_WIDTH, p.bottom);
-
-        // Alsó perem
         ctx.fillRect(p.x - 3, bottomY, PIPE_WIDTH + 6, 12);
         ctx.strokeRect(p.x - 3, bottomY, PIPE_WIDTH + 6, 12);
       }
@@ -1205,10 +1192,20 @@
       gameState = "GAMEOVER";
     }
 
-    function loop() {
+    function loop(currentTime) {
+      gameLoopId = requestAnimationFrame(loop);
+
+      if (!lastTime) lastTime = currentTime;
+      const elapsed = currentTime - lastTime;
+
+      if (elapsed < FRAME_TIME) {
+        return;
+      }
+
+      lastTime = currentTime - (elapsed % FRAME_TIME);
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Halvány víz alatti hullámvonalak a háttérben
       ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -1238,7 +1235,6 @@
         shark.velocity += shark.gravity;
         shark.y += shark.velocity;
 
-        // Felső és alsó pályahatárok
         if (shark.y + 12 > canvas.height) {
           shark.y = canvas.height - 12;
           triggerGameOver();
@@ -1279,14 +1275,13 @@
         ctx.font = "bold 13px -apple-system, sans-serif";
         ctx.fillText("Koppints az újrakezdéshez 🔄", canvas.width / 2, 265);
       }
-
-      gameLoopId = requestAnimationFrame(loop);
     }
 
     btnOpenGame.addEventListener("click", () => {
       gameModal.classList.remove("hidden");
       resetGame();
       gameState = "START";
+      lastTime = 0;
       cancelAnimationFrame(gameLoopId);
       gameLoopId = requestAnimationFrame(loop);
     });
